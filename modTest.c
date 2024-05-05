@@ -109,23 +109,65 @@ void* thread_dispatch3(int* rerere){
 	return (void*) 0;
 }
 
-int main(int argc, char** argv) {
-  // create your threads here
-  
-  pthread_t tid[3];
+void* evenTestDefault(int* uh){
+  clock_t start, end;
+	long long total = 0;
+	int op = 100000;
+	
+	start = clock();
+	for(int i = 10000; i < 10000 + op; i++){
+		total += multiply_mod(i, 2);
+	}
+	end = clock();
+	
+	printf("multiply total: %lld\n", total);
+	double time = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf("Default isEven took: %f seconds for %d operations\n", time, op);
+	return (void*) 0;
+}
+
+void* evenTestAND(int* ehrjehrje){
+  clock_t start, end;
+	long long total = 0;
+	int op = 100000;
+	
+	start = clock();
+	for(int i = 10000; i < 10000 + op; i++){
+		total += (i) & 1;
+	}
+	end = clock();
+	
+	printf("& total: %lld\n", total);
+	double time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("& isEven took: %f seconds for %d operations\n", time, op);
+	return (void*) 0;
+}
+
+int main(int argc, char** argv) { 
+  pthread_t tid[5];
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   int o1 = 0;
   int o2 = 1;
   int o3 = 2;
+  int o4 = 3;
+  int o5 = 4;
   
   pthread_create(&tid[0], &attr, thread_dispatch1, &o1);
   pthread_create(&tid[1], &attr, thread_dispatch2, &o2);
   pthread_create(&tid[2], &attr, thread_dispatch3, &o3);
 
+  sleep(1);
+
+  pthread_create(&tid[3], &attr, evenTestDefault, &o4);
+  pthread_create(&tid[4], &attr, evenTestAND, &o5);
+
   pthread_join(tid[0], NULL);
   pthread_join(tid[1], NULL);
-  
+  pthread_join(tid[2], NULL);
+  pthread_join(tid[3], NULL);
+  pthread_join(tid[4], NULL);
+
   exit(0);
 
 }
